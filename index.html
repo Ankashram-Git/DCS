@@ -1,0 +1,921 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Holes That Weren't There: Abraham Wald and the Bias That Kills</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;0,700;1,300;1,400;1,600&family=DM+Mono:ital,wght@0,300;0,400;1,300&family=Jost:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --void: #0e0e0f;
+    --deep: #161618;
+    --surface: #1e1e21;
+    --border: #2e2e34;
+    --muted: #6b6b78;
+    --text: #d4d0c8;
+    --text-bright: #ede9df;
+    --amber: #e8a63a;
+    --amber-dim: #9e6f20;
+    --amber-pale: rgba(232, 166, 58, 0.07);
+    --red: #c0392b;
+    --green: #27ae60;
+    --mono: 'DM Mono', monospace;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--void);
+    color: var(--text);
+    font-family: 'Cormorant Garamond', Georgia, serif;
+    font-size: 20px;
+    line-height: 1.8;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* Top bar */
+  .topbar {
+    background: var(--deep);
+    border-bottom: 1px solid var(--border);
+    padding: 14px 32px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-family: 'Jost', sans-serif;
+    font-size: 12px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+  }
+
+  .topbar-brand {
+    color: var(--amber);
+    font-weight: 600;
+    text-decoration: none;
+  }
+
+  .topbar-tag {
+    color: var(--muted);
+    font-weight: 300;
+  }
+
+  /* Hero */
+  .hero {
+    position: relative;
+    min-height: 88vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    padding: 0 0 72px;
+    overflow: hidden;
+  }
+
+  .hero-bg {
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(ellipse 60% 50% at 70% 40%, rgba(232,166,58,0.06) 0%, transparent 70%),
+      radial-gradient(ellipse 40% 60% at 20% 70%, rgba(192,57,43,0.04) 0%, transparent 60%),
+      var(--void);
+  }
+
+  /* Plane diagram */
+  .plane-diagram {
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 55%;
+    height: 100%;
+    opacity: 0.12;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    pointer-events: none;
+  }
+
+  .plane-diagram svg {
+    width: 90%;
+    height: 90%;
+  }
+
+  .hero-content {
+    position: relative;
+    z-index: 2;
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 0 40px;
+    width: 100%;
+  }
+
+  .hero-kicker {
+    font-family: 'Jost', sans-serif;
+    font-size: 11px;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    color: var(--amber);
+    margin-bottom: 28px;
+    font-weight: 500;
+  }
+
+  .hero h1 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: clamp(2.8rem, 7vw, 5.5rem);
+    font-weight: 300;
+    color: var(--text-bright);
+    line-height: 1.05;
+    margin-bottom: 32px;
+    letter-spacing: -0.5px;
+  }
+
+  .hero h1 em {
+    font-style: italic;
+    color: var(--amber);
+    font-weight: 300;
+  }
+
+  .hero-deck {
+    font-size: 1.15rem;
+    color: var(--muted);
+    max-width: 560px;
+    font-weight: 300;
+    line-height: 1.7;
+    font-family: 'Jost', sans-serif;
+    margin-bottom: 48px;
+  }
+
+  .hero-meta {
+    display: flex;
+    gap: 40px;
+    flex-wrap: wrap;
+  }
+
+  .meta-item {
+    font-family: 'Jost', sans-serif;
+    font-size: 11px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--border);
+    font-weight: 400;
+  }
+
+  .meta-item span { color: var(--muted); }
+
+  /* Divider */
+  .divider {
+    width: 100%;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--border), transparent);
+    margin: 0;
+  }
+
+  /* Article body */
+  .article {
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 80px 40px 120px;
+  }
+
+  p {
+    margin-bottom: 1.6em;
+    font-weight: 300;
+    color: var(--text);
+  }
+
+  p + p { text-indent: 1.5em; }
+  p.no-indent { text-indent: 0; }
+
+  /* Drop cap */
+  .drop-cap::first-letter {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 6.5em;
+    font-weight: 600;
+    float: left;
+    line-height: 0.7;
+    margin-right: 8px;
+    margin-top: 12px;
+    color: var(--amber);
+  }
+
+  /* Section headings */
+  h2 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 2.1rem;
+    font-weight: 600;
+    color: var(--text-bright);
+    margin: 72px 0 24px;
+    line-height: 1.2;
+    letter-spacing: -0.3px;
+    font-style: italic;
+  }
+
+  h3 {
+    font-family: 'Jost', sans-serif;
+    font-size: 0.75rem;
+    font-weight: 500;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    color: var(--amber);
+    margin: 48px 0 16px;
+  }
+
+  strong {
+    font-weight: 600;
+    color: var(--text-bright);
+  }
+
+  em.stat {
+    font-style: normal;
+    color: var(--amber);
+    font-weight: 600;
+  }
+
+  /* Pull quote */
+  .pull-quote {
+    margin: 56px -40px;
+    padding: 40px 48px;
+    border-left: 2px solid var(--amber);
+    background: var(--amber-pale);
+    font-size: 1.55rem;
+    font-weight: 300;
+    font-style: italic;
+    color: var(--text-bright);
+    line-height: 1.45;
+    letter-spacing: 0.2px;
+  }
+
+  .pull-quote cite {
+    display: block;
+    margin-top: 16px;
+    font-family: 'Jost', sans-serif;
+    font-size: 0.65rem;
+    font-style: normal;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--amber-dim);
+    font-weight: 400;
+  }
+
+  /* Bullet hole visualizer */
+  .plane-viz {
+    margin: 56px 0;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    padding: 40px;
+    text-align: center;
+    position: relative;
+  }
+
+  .plane-viz .viz-label {
+    font-family: 'Jost', sans-serif;
+    font-size: 10px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--amber);
+    margin-bottom: 24px;
+    font-weight: 500;
+  }
+
+  .viz-row {
+    display: flex;
+    justify-content: center;
+    gap: 64px;
+    flex-wrap: wrap;
+  }
+
+  .viz-plane {
+    text-align: center;
+  }
+
+  .viz-plane svg {
+    display: block;
+    margin: 0 auto 16px;
+  }
+
+  .viz-plane-label {
+    font-family: 'Jost', sans-serif;
+    font-size: 11px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--muted);
+    font-weight: 400;
+  }
+
+  /* Data boxes */
+  .data-box {
+    margin: 48px 0;
+    background: var(--deep);
+    border: 1px solid var(--border);
+    padding: 36px 40px;
+    position: relative;
+  }
+
+  .data-box::before {
+    content: attr(data-label);
+    position: absolute;
+    top: -10px;
+    left: 32px;
+    background: var(--amber);
+    color: var(--void);
+    font-family: 'Jost', sans-serif;
+    font-size: 9px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    padding: 3px 12px;
+    font-weight: 600;
+  }
+
+  .data-box h4 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.1rem;
+    color: var(--text-bright);
+    margin-bottom: 20px;
+    font-style: italic;
+    font-weight: 600;
+  }
+
+  .data-box p {
+    font-size: 0.9rem;
+    color: var(--muted);
+    margin-bottom: 0;
+    text-indent: 0;
+    font-family: 'Jost', sans-serif;
+    font-weight: 300;
+    line-height: 1.7;
+  }
+
+  .data-box p + p {
+    margin-top: 12px;
+    text-indent: 0;
+  }
+
+  /* Comparison table */
+  .compare-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 40px 0;
+    font-family: 'Jost', sans-serif;
+    font-size: 0.85rem;
+  }
+
+  .compare-table th {
+    text-align: left;
+    padding: 12px 16px;
+    font-size: 9px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--amber);
+    border-bottom: 1px solid var(--border);
+    font-weight: 500;
+  }
+
+  .compare-table td {
+    padding: 14px 16px;
+    border-bottom: 1px solid var(--border);
+    color: var(--text);
+    font-weight: 300;
+    vertical-align: top;
+    line-height: 1.5;
+  }
+
+  .compare-table tr:last-child td { border-bottom: none; }
+
+  .compare-table td:first-child {
+    color: var(--amber);
+    font-weight: 500;
+    white-space: nowrap;
+  }
+
+  .compare-table td.survived { color: #5dade2; }
+  .compare-table td.missing { color: #ec7063; }
+
+  /* Callout — inline insight */
+  .insight {
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+    padding: 28px 0;
+    margin: 48px 0;
+  }
+
+  .insight-head {
+    font-family: 'Jost', sans-serif;
+    font-size: 9px;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+    color: var(--amber-dim);
+    margin-bottom: 12px;
+    font-weight: 500;
+  }
+
+  .insight p {
+    font-size: 1rem;
+    font-style: italic;
+    color: var(--text-bright);
+    margin: 0;
+    text-indent: 0;
+    font-weight: 300;
+  }
+
+  /* Examples grid */
+  .examples-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2px;
+    margin: 48px 0;
+  }
+
+  @media (max-width: 580px) {
+    .examples-grid { grid-template-columns: 1fr; }
+  }
+
+  .example-card {
+    background: var(--surface);
+    padding: 28px 24px;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .example-card::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 2px;
+    background: var(--border);
+  }
+
+  .example-card:nth-child(1)::after { background: #5dade2; }
+  .example-card:nth-child(2)::after { background: #e67e22; }
+  .example-card:nth-child(3)::after { background: #27ae60; }
+  .example-card:nth-child(4)::after { background: #8e44ad; }
+
+  .example-card .domain {
+    font-family: 'Jost', sans-serif;
+    font-size: 9px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 12px;
+    font-weight: 500;
+  }
+
+  .example-card h5 {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: var(--text-bright);
+    margin-bottom: 10px;
+    font-style: italic;
+  }
+
+  .example-card p {
+    font-family: 'Jost', sans-serif;
+    font-size: 0.82rem;
+    color: var(--muted);
+    margin: 0;
+    text-indent: 0;
+    line-height: 1.6;
+    font-weight: 300;
+  }
+
+  /* Wald bio box */
+  .bio-box {
+    background: var(--deep);
+    border-left: 2px solid var(--border);
+    padding: 32px 36px;
+    margin: 56px 0;
+  }
+
+  .bio-box .bio-name {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.6rem;
+    font-weight: 600;
+    color: var(--text-bright);
+    margin-bottom: 4px;
+  }
+
+  .bio-box .bio-dates {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.75rem;
+    color: var(--amber-dim);
+    margin-bottom: 20px;
+    letter-spacing: 1px;
+  }
+
+  .bio-box p {
+    font-size: 0.92rem;
+    font-family: 'Jost', sans-serif;
+    font-weight: 300;
+    color: var(--muted);
+    line-height: 1.7;
+    margin-bottom: 0;
+    text-indent: 0;
+  }
+
+  /* The question checklist */
+  .checklist {
+    margin: 40px 0;
+    list-style: none;
+  }
+
+  .checklist li {
+    display: flex;
+    gap: 16px;
+    align-items: flex-start;
+    padding: 16px 0;
+    border-bottom: 1px solid var(--border);
+    font-family: 'Jost', sans-serif;
+    font-size: 0.9rem;
+    font-weight: 300;
+    color: var(--text);
+    line-height: 1.6;
+  }
+
+  .checklist li:last-child { border-bottom: none; }
+
+  .checklist li .num {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.7rem;
+    color: var(--amber);
+    min-width: 24px;
+    margin-top: 2px;
+    letter-spacing: 1px;
+  }
+
+  /* Final section */
+  .final {
+    margin-top: 72px;
+    padding-top: 48px;
+    border-top: 1px solid var(--border);
+  }
+
+  .final-quote {
+    font-size: 1.9rem;
+    font-style: italic;
+    font-weight: 300;
+    color: var(--text-bright);
+    line-height: 1.3;
+    margin-bottom: 32px;
+    letter-spacing: -0.3px;
+  }
+
+  .final-quote em {
+    color: var(--amber);
+    font-style: italic;
+  }
+
+  .tagline-box {
+    background: var(--amber);
+    display: inline-block;
+    padding: 16px 32px;
+    margin-top: 24px;
+    font-family: 'Jost', sans-serif;
+    font-size: 0.8rem;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--void);
+    font-weight: 600;
+  }
+
+  /* Footer */
+  .footer {
+    background: var(--deep);
+    border-top: 1px solid var(--border);
+    padding: 40px;
+    text-align: center;
+  }
+
+  .footer-brand {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.8rem;
+    color: var(--amber);
+    font-weight: 300;
+    letter-spacing: 2px;
+    margin-bottom: 8px;
+  }
+
+  .footer-tagline {
+    font-family: 'Jost', sans-serif;
+    font-size: 0.75rem;
+    color: var(--muted);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    font-weight: 300;
+  }
+
+  /* Animations */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .hero-kicker { animation: fadeUp 0.7s ease both; }
+  .hero h1 { animation: fadeUp 0.7s 0.1s ease both; }
+  .hero-deck { animation: fadeUp 0.7s 0.2s ease both; }
+  .hero-meta { animation: fadeUp 0.7s 0.3s ease both; }
+
+  @media (max-width: 600px) {
+    .hero-content { padding: 0 20px; }
+    .article { padding: 60px 20px 80px; }
+    .pull-quote { margin: 40px 0; padding: 28px 24px; }
+    .topbar { padding: 14px 20px; }
+    .hero { min-height: 70vh; }
+  }
+
+  hr.spacer { border: none; border-top: 1px solid var(--border); margin: 56px 0; }
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <a class="topbar-brand" href="#">Ankashram</a>
+  <span class="topbar-tag">Analytics Thinking</span>
+</div>
+
+<header class="hero">
+  <div class="hero-bg"></div>
+
+  <!-- Abstract plane silhouette -->
+  <div class="plane-diagram">
+    <svg viewBox="0 0 500 500" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <!-- Fuselage -->
+      <ellipse cx="250" cy="250" rx="180" ry="38" fill="white" opacity="0.9"/>
+      <!-- Wings -->
+      <ellipse cx="250" cy="250" rx="60" ry="130" fill="white" opacity="0.9"/>
+      <!-- Tail -->
+      <ellipse cx="80" cy="250" rx="20" ry="70" fill="white" opacity="0.7"/>
+      <!-- Engine left -->
+      <ellipse cx="240" cy="155" rx="14" ry="30" fill="white" opacity="0.8"/>
+      <!-- Engine right -->
+      <ellipse cx="240" cy="345" rx="14" ry="30" fill="white" opacity="0.8"/>
+      <!-- Cockpit -->
+      <ellipse cx="400" cy="250" rx="18" ry="14" fill="white" opacity="0.5"/>
+
+      <!-- Bullet holes - fuselage (many dots = survived hits) -->
+      <circle cx="220" cy="248" r="3" fill="#e8a63a" opacity="0.8"/>
+      <circle cx="270" cy="242" r="3" fill="#e8a63a" opacity="0.8"/>
+      <circle cx="195" cy="255" r="2.5" fill="#e8a63a" opacity="0.7"/>
+      <circle cx="300" cy="252" r="3" fill="#e8a63a" opacity="0.8"/>
+      <circle cx="180" cy="245" r="2" fill="#e8a63a" opacity="0.7"/>
+      <circle cx="250" cy="260" r="2.5" fill="#e8a63a" opacity="0.6"/>
+      <circle cx="320" cy="248" r="3" fill="#e8a63a" opacity="0.8"/>
+      <circle cx="165" cy="252" r="2" fill="#e8a63a" opacity="0.7"/>
+      <circle cx="340" cy="244" r="2.5" fill="#e8a63a" opacity="0.6"/>
+      <circle cx="230" cy="238" r="2" fill="#e8a63a" opacity="0.6"/>
+
+      <!-- Bullet holes - wings (some) -->
+      <circle cx="255" cy="175" r="2.5" fill="#e8a63a" opacity="0.7"/>
+      <circle cx="248" cy="200" r="2" fill="#e8a63a" opacity="0.6"/>
+      <circle cx="252" cy="310" r="2.5" fill="#e8a63a" opacity="0.7"/>
+      <circle cx="245" cy="290" r="2" fill="#e8a63a" opacity="0.6"/>
+
+      <!-- Engine — almost NO holes (these planes didn't come back) -->
+      <!-- Cockpit — almost NO holes -->
+    </svg>
+  </div>
+
+  <div class="hero-content">
+    <div class="hero-kicker">Analytics &nbsp;&middot;&nbsp; Cognitive Bias &nbsp;&middot;&nbsp; Data Thinking</div>
+    <h1>The Holes<br>That Weren't <em>There</em></h1>
+    <p class="hero-deck">How a Jewish refugee mathematician looked at bullet-riddled planes and saw the data that was missing — and why that blind spot lives in every analyst's work today.</p>
+    <div class="hero-meta">
+      <div class="meta-item">By <span>Ankashram</span></div>
+      <div class="meta-item">Read <span>12 minutes</span></div>
+      <div class="meta-item">Category <span>Thinking &amp; Bias</span></div>
+    </div>
+  </div>
+</header>
+
+<div class="divider"></div>
+
+<article class="article">
+
+  <p class="drop-cap no-indent">The year is 1943. American bombers are flying missions over Nazi Germany and not coming back. The losses are staggering — aircraft being shot down faster than factories can replace them, crews dying in numbers that strain comprehension. The Army Air Corps is desperate. They need to armour their planes better, but armour is heavy, and a plane weighed down too much cannot carry bombs, cannot manoeuvre, cannot fly far enough. Every kilogram of steel plating placed on one part of a plane means a kilogram taken away from somewhere else.</p>
+
+  <p>So the military does what any reasonable institution does in 1943: it collects data. Mechanics and engineers examine hundreds of planes returning from combat and map out where the bullet holes are. The pattern is clear. The fuselage — the main body of the plane — is riddled with hits. The wings show damage. The tail section is marked. The engines and the cockpit, by contrast, show almost none.</p>
+
+  <p>The conclusion seems obvious: reinforce where the bullets hit most. Protect the fuselage. Armour the wings. Put the steel where the enemy's fire is landing.</p>
+
+  <p>The military brings their data to the Statistical Research Group at Columbia University — a classified wartime unit of elite mathematicians assembled to help the Allies win with numbers, not just weapons. And one man in that room looks at the data and says something that stops everyone cold.</p>
+
+  <p><strong>"You're looking at this completely backwards. Put the armour where the bullet holes are <em>not</em>."</strong></p>
+
+  <div class="bio-box">
+    <div class="bio-name">Abraham Wald</div>
+    <div class="bio-dates">1902 – 1950 &nbsp;·&nbsp; Mathematician &nbsp;·&nbsp; Statistical Research Group, Columbia University</div>
+    <p>Born in Kolozsvár, Hungary (now Cluj, Romania) into a Jewish family, Wald was educated at home by his parents — the Hungarian school system required Saturday attendance, which his family could not permit on the Jewish Sabbath. He went on to earn a PhD in mathematics from the University of Vienna. When the Nazis annexed Austria in 1938, Wald fled to the United States, where he joined Columbia University. He was one of the founding members of the SRG — a classified program described by some as "the Manhattan Project but with equations instead of bombs," whose members included future Nobel laureates Milton Friedman and George Stigler. Wald died in 1950 in a plane crash in India, where he had been invited to lecture on statistics by the Indian government. He was 48.</p>
+  </div>
+
+  <h2>The Question Nobody Had Thought to Ask</h2>
+
+  <p>Wald's insight was not complicated. But it required something far rarer than intelligence: the willingness to interrogate the data itself before trusting it.</p>
+
+  <p>The question he asked was simple: <strong>Where are the planes that didn't come back?</strong></p>
+
+  <p>The military had data on hundreds of planes. But they were data on hundreds of planes that had survived their missions and made it back to base. The planes that had been shot down over Germany — the ones that had taken catastrophic hits — were at the bottom of the North Sea or burning in a field in France. They were not at the base. They were not in the dataset.</p>
+
+  <p>So the bullet hole map wasn't showing where planes got hit. It was showing where planes could get hit <em>and still fly home</em>. The fuselage had many holes because a fuselage hit, while damaging, was often survivable. The engines had almost no holes — not because enemy fire avoided the engines, but because a plane hit in the engine didn't make it back to be counted.</p>
+
+  <div class="plane-viz">
+    <div class="viz-label">What the data showed &mdash; and what it actually meant</div>
+    <div class="viz-row">
+      <div class="viz-plane">
+        <svg width="180" height="160" viewBox="0 0 180 160">
+          <!-- Fuselage -->
+          <ellipse cx="90" cy="80" rx="68" ry="18" fill="#2e2e34"/>
+          <!-- Wings -->
+          <ellipse cx="90" cy="80" rx="22" ry="58" fill="#2e2e34"/>
+          <!-- Tail -->
+          <ellipse cx="30" cy="80" rx="10" ry="30" fill="#252528"/>
+          <!-- Engine markers -->
+          <ellipse cx="86" cy="38" rx="6" ry="12" fill="#252528"/>
+          <ellipse cx="86" cy="122" rx="6" ry="12" fill="#252528"/>
+          <!-- MANY bullet holes on fuselage -->
+          <circle cx="80" cy="78" r="3" fill="#e8a63a"/>
+          <circle cx="100" cy="74" r="3" fill="#e8a63a"/>
+          <circle cx="65" cy="82" r="2.5" fill="#e8a63a"/>
+          <circle cx="115" cy="80" r="3" fill="#e8a63a"/>
+          <circle cx="55" cy="78" r="2" fill="#e8a63a"/>
+          <circle cx="130" cy="76" r="2.5" fill="#e8a63a"/>
+          <circle cx="88" cy="86" r="2" fill="#e8a63a"/>
+          <circle cx="72" cy="74" r="2.5" fill="#e8a63a"/>
+          <!-- Some on wings -->
+          <circle cx="92" cy="55" r="2" fill="#e8a63a" opacity="0.7"/>
+          <circle cx="88" cy="110" r="2" fill="#e8a63a" opacity="0.7"/>
+          <!-- Label -->
+          <text x="90" y="152" text-anchor="middle" fill="#6b6b78" font-family="Jost, sans-serif" font-size="8" letter-spacing="1">Fuselage: Many hits</text>
+        </svg>
+        <div class="viz-plane-label" style="color:#e8a63a">Visible in data</div>
+      </div>
+
+      <div class="viz-plane">
+        <svg width="180" height="160" viewBox="0 0 180 160">
+          <!-- Fuselage -->
+          <ellipse cx="90" cy="80" rx="68" ry="18" fill="#2e2e34"/>
+          <!-- Wings -->
+          <ellipse cx="90" cy="80" rx="22" ry="58" fill="#2e2e34"/>
+          <!-- Tail -->
+          <ellipse cx="30" cy="80" rx="10" ry="30" fill="#252528"/>
+          <!-- Engine markers -->
+          <ellipse cx="86" cy="38" rx="6" ry="12" fill="#252528"/>
+          <ellipse cx="86" cy="122" rx="6" ry="12" fill="#252528"/>
+          <!-- ENGINE hit — shown in red (these planes didn't return) -->
+          <circle cx="86" cy="38" r="5" fill="#c0392b"/>
+          <circle cx="83" cy="35" r="3" fill="#c0392b"/>
+          <circle cx="89" cy="42" r="3" fill="#c0392b" opacity="0.8"/>
+          <circle cx="86" cy="122" r="5" fill="#c0392b"/>
+          <circle cx="83" cy="118" r="3" fill="#c0392b" opacity="0.8"/>
+          <!-- Label -->
+          <text x="90" y="152" text-anchor="middle" fill="#6b6b78" font-family="Jost, sans-serif" font-size="8" letter-spacing="1">Engine: Almost no hits</text>
+        </svg>
+        <div class="viz-plane-label" style="color:#c0392b">Missing from data</div>
+      </div>
+    </div>
+    <p style="margin-top:24px; font-family:'Jost',sans-serif; font-size:0.78rem; color:var(--muted); text-indent:0; line-height:1.6;">
+      The amber dots mark where returning planes were hit — and survived. The red marks show where the <em>missing</em> planes were likely hit. Those planes never returned to tell their story.
+    </p>
+  </div>
+
+  <p class="no-indent">Wald's reasoning was almost poetic in its logic. If bullet holes are uniformly distributed across enemy fire, then every part of the plane gets hit roughly equally. The fact that engines showed almost no holes on returning planes didn't mean engines were being missed — it meant planes hit in the engine weren't surviving to be examined. The absence was not evidence of safety. The absence was evidence of catastrophe.</p>
+
+  <div class="pull-quote">
+    "A mathematician is always asking: What assumptions are you making? And are they justified? Once you recognise that you've been making assumptions, it can take just a moment to realise the assumption is wrong."
+    <cite>Jordan Ellenberg — How Not to Be Wrong</cite>
+  </div>
+
+  <p>The military listened. They armoured the engines and the cockpit — the areas showing the fewest holes on returning planes. And the survival rates of bomber crews improved.</p>
+
+  <p>The name Wald gave to this thinking error is now part of every serious analyst's vocabulary: <strong>Survivorship Bias</strong>.</p>
+
+  <h2>What Survivorship Bias Actually Is</h2>
+
+  <p>Survivorship bias is the logical error of drawing conclusions only from the things that made it through a filter — while ignoring, forgetting, or never seeing the things that didn't. It is a species of selection bias, but with a particular character: the missing data isn't random. It's systematically absent precisely because of the thing you're trying to study.</p>
+
+  <p>The planes that were shot down weren't randomly distributed across the sky. They fell because they were hit in the wrong place. The absence of engine-hit planes in your dataset is not noise — it is the signal. And treating it as nothing, treating it as simply "no data," is what kills people.</p>
+
+  <div class="data-box" data-label="The Mechanism">
+    <h4>Why our minds fall for it, every time</h4>
+    <p>The human brain is wired to learn from examples. We see what's in front of us and build mental models from it. When the data available is systematically skewed — when only the survivors show up — our brains don't automatically ask "who isn't here?" We build our understanding from what we can touch, measure, and observe. The missing cases are invisible, and invisible things don't update our beliefs.</p>
+    <p>This is not a failure of intelligence. It is a failure of <em>frame</em> — the set of assumptions you bring to the data before you even begin to analyse it. Wald's genius was that he questioned the frame before he touched the data. He asked: is this sample representative of what I'm trying to study? And the answer was no.</p>
+  </div>
+
+  <h2>The Bias That's Hiding in Plain Sight — Everywhere</h2>
+
+  <p>Once you see survivorship bias, you see it everywhere. It is one of the most pervasive errors in human reasoning — not because people are careless, but because the missing data, by definition, is not there to remind you it's missing.</p>
+
+  <div class="examples-grid">
+    <div class="example-card">
+      <div class="domain">Investing &amp; Finance</div>
+      <h5>"Mutual funds consistently outperform the market"</h5>
+      <p>Fund performance databases only track funds that currently exist. Funds that performed poorly were quietly shut down or merged into others. The graveyard of failed funds is not in the dataset. The reported "average return" is the average of the survivors — which is, by construction, higher than the true average.</p>
+    </div>
+    <div class="example-card">
+      <div class="domain">Entrepreneurship</div>
+      <h5>"Just follow what successful founders did"</h5>
+      <p>Business schools study Infosys, Flipkart, and Zerodha. They do not study the 90 companies that followed the same playbook and failed. When you extract lessons only from winners, you get a distorted picture of what causes success — because the same traits exist in the failures you never examined.</p>
+    </div>
+    <div class="example-card">
+      <div class="domain">Customer Research</div>
+      <h5>"Our customers love the product — surveys say so"</h5>
+      <p>Your NPS survey goes to existing, active customers. The customers who hated the product and left are no longer customers. They don't receive your survey. You are measuring the opinion of survivors. The churned customers — the ones with the most important feedback — are structurally excluded from your data.</p>
+    </div>
+    <div class="example-card">
+      <div class="domain">Healthcare</div>
+      <h5>"More shooting victims are hospitalised with arm wounds than chest wounds"</h5>
+      <p>This is because patients shot in the chest often die before reaching the hospital. The hospital dataset only contains the survivors. A doctor who sees mostly arm wounds and concludes "the chest is safer" has made Wald's exact error — in a setting where the consequences are fatal.</p>
+    </div>
+  </div>
+
+  <h3>The "They Don't Make Them Like They Used To" Illusion</h3>
+
+  <p>Here is a quieter, more everyday version. How many times have you heard someone say: <em>"Old furniture was better quality. They don't make things like they used to."</em></p>
+
+  <p>This feels intuitively true. The antique table your grandmother had is still standing. The dining chair from the 1970s is solid. Meanwhile, modern flat-pack furniture wobbles after two years. But think carefully. Every old piece of furniture you see today is, by definition, one that survived. The low-quality furniture of the 1950s and 1960s — and there was plenty of it — rotted, broke, and was thrown away decades ago. You never see it. You compare the best survivors of the past against the full average of the present. It's not a fair fight. It's Wald's bullet holes again.</p>
+
+  <div class="insight">
+    <div class="insight-head">The Analyst's Principle</div>
+    <p>The data you have is a sample. The question is not "what does this sample tell me?" — it is "what kind of entity is systematically absent from this sample, and what would their inclusion change?"</p>
+  </div>
+
+  <h2>Abraham Wald's Deeper Method: Questioning the Frame</h2>
+
+  <p>What made Wald remarkable was not just that he caught survivorship bias in one instance. It was the <em>habit of mind</em> that produced the insight. He was trained to distrust his own assumptions. Before working with data, he asked what assumptions were built into the act of collecting it.</p>
+
+  <p>The military's assumption was unstated but foundational: <em>the planes we are examining are a representative sample of all planes that came under fire.</em> This assumption was false. And because it was never spoken aloud, nobody had challenged it. Wald's first move was to make the assumption visible. His second move was to test it. His third move was to act on its failure.</p>
+
+  <p>This is a three-step method every analyst should adopt before touching a dataset:</p>
+
+  <ul class="checklist">
+    <li>
+      <span class="num">01</span>
+      <span><strong>Name the filter.</strong> Every dataset was collected through some process. What process? Who was included? Who was automatically excluded? What had to happen for an observation to appear in your data at all?</span>
+    </li>
+    <li>
+      <span class="num">02</span>
+      <span><strong>Ask who is missing.</strong> Not "is the data accurate?" — accuracy is about measurement error. This is about structural absence. Which entities never appear in this data because of the very phenomenon you're studying?</span>
+    </li>
+    <li>
+      <span class="num">03</span>
+      <span><strong>Assess the direction of bias.</strong> Does the missing data bias your conclusions upward or downward? Does it make the thing you're measuring look better, worse, rarer, or more common than it truly is? The direction of bias is the key to correcting it.</span>
+    </li>
+  </ul>
+
+  <hr class="spacer">
+
+  <h2>The Indian Business Context: Where This Shows Up Today</h2>
+
+  <p>Survivorship bias is not a historical curiosity. It is alive and active in the decisions that Indian companies and analysts make every week.</p>
+
+  <p>Consider a retail chain analysing which store locations perform best. They pull data on all current stores and study what the high performers have in common — neighbourhood income, footfall, competition, store size. They build a model. But their dataset contains only stores that are currently open. The fifteen stores that were opened in similar locations and failed — and were quietly shut — are not in the model. The lessons of what doesn't work have been erased from the evidence.</p>
+
+  <p>Consider an HR team that analyses what traits the company's most successful senior leaders share. They identify common patterns: engineering backgrounds, early promotions, willingness to relocate. They use this to shape hiring policy. But they only studied people who succeeded and stayed. They didn't study people with identical traits who left, burned out, or were let go. The selection bias is not just about the data — it is built into the question itself.</p>
+
+  <p>Consider a product team at a startup that surveys users to understand engagement. Active users respond. Churned users don't — they've left the product and the communication funnel entirely. The survey returns glowing feedback, because only people who still care enough to use the product are giving feedback. The team concludes the product is loved. The silence of the departed is interpreted as nothing, when it is everything.</p>
+
+  <div class="data-box" data-label="The Wald Question">
+    <h4>One question that changes the analysis</h4>
+    <p>Before finalising any analysis, ask: <em>"If the opposite of what I'm looking at were true — if this had failed, ended, churned, or died — would it still appear in my dataset?"</em></p>
+    <p>If the answer is no, you have a survivorship problem. Your dataset contains only the cases that made it through a filter. You are looking at bullet holes on returning planes. The real information is in the planes that didn't come home.</p>
+  </div>
+
+  <h2>The SRG's Secret: Absence as Evidence</h2>
+
+  <p>There is a concept in logic called "argument from silence" — the idea that the absence of evidence can, in certain conditions, itself be evidence. Wald understood this intuitively. When he saw no bullet holes on the engines of returning planes, he did not conclude "the engine is safe." He concluded: "something is preventing engine-hit planes from showing up in this data." Absence, for him, was a signal requiring explanation — not a blank.</p>
+
+  <p>This is one of the most important and underused ideas in data analysis. When a metric shows zero — when a category has no entries — the analyst's reflex is to move on. Nothing there. But Wald would ask: <em>why nothing? Is nothing there because nothing happened? Or because what happened cannot be measured?</em></p>
+
+  <p>The customer who never complained might be perfectly happy. Or they might have left without a word, and the "no complaint" in your CRM is not contentment — it's absence. The zero in your funnel dropout data might mean no dropout. Or it might mean your tracking code broke and you stopped measuring. The silence in your employee survey might mean everyone is fine. Or it might mean the employees with the strongest grievances don't trust the survey and didn't fill it out.</p>
+
+  <p>Wald's discipline is to never accept a zero or a blank at face value. <strong>Always ask what process produced it.</strong></p>
+
+  <div class="pull-quote">
+    "The dangerous data is not wrong data. Wrong data announces itself eventually. The dangerous data is the data that is systematically absent — invisible, uncollected, and therefore never contested."
+  </div>
+
+  <h2>A Fitting End — and a Persistent Beginning</h2>
+
+  <p>Abraham Wald died in 1950 in a plane crash in southern India — a devastating irony for a man who had spent years making planes safer. He was 48 years old. He had published more than 90 papers and books, founded the field of sequential analysis, and made contributions to decision theory that are still taught in graduate programmes today.</p>
+
+  <p>But it is the bullet hole story — or more precisely, the principle behind it — that survives most powerfully. Not because it is the most technically sophisticated thing Wald did (it isn't), but because it captures something that no algorithm can replace: the courage to question the data collection process before trusting the data.</p>
+
+  <p>Wald's insight was not about mathematics. It was about epistemology — the philosophy of how we know what we know. He understood that data is never neutral. It is always collected through a process. And that process always has a logic, a filter, an implicit assumption about what counts and what doesn't. To analyse data without questioning that filter is to armour the fuselage when the engine is what kills you.</p>
+
+  <div class="final">
+    <div class="final-quote">
+      The planes that didn't come back had the most important data of all. They just weren't there to <em>give</em> it.
+    </div>
+    <p style="font-family:'Jost',sans-serif; font-size:0.9rem; color:var(--muted); line-height:1.7; font-weight:300;">That is the condition of almost every analyst, in almost every organisation, on almost every day. The customers who left aren't in the CRM. The products that failed aren't in the portfolio review. The employees who quit aren't in the engagement survey. The startups that folded aren't in the case studies. The data you have is what survived. What you need to know is often what didn't.</p>
+    <p style="font-family:'Jost',sans-serif; font-size:0.9rem; color:var(--muted); line-height:1.7; font-weight:300; margin-top: 16px;">Abraham Wald's real gift was not a mathematical formula. It was a question: <em style="color:var(--text-bright)">What would have to have happened for this data point to be missing?</em> Ask that question every time. It is the difference between analysis that sounds right and analysis that actually is.</p>
+    <div class="tagline-box">Tools fade. Thinking compounds.</div>
+  </div>
+
+</article>
+
+<footer class="footer">
+  <div class="footer-brand">Ankashram</div>
+  <div class="footer-tagline">Teaching professionals to think with data, not just use it.</div>
+</footer>
+
+</body>
+</html>
